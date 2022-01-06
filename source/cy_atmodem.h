@@ -60,9 +60,11 @@ extern "C" {
 /* Parameters common to all modems */
 
 #define AT_CMD_READY_CHECK          "AT\r\n"
+#define AT_CMD_MFG                  "AT+CGMI\r"
 #define AT_CMD_MODEL                "AT+CGMM\r"
 #define AT_CMD_IMEI                 "AT+CGSN\r"
 #define AT_CMD_ECHO_OFF             "ATE0\r"
+#define AT_CMD_ECHO_ON              "ATE1\r"
 
 #define AT_RSP_CSIM                 "+CSIM: "
 #define AT_CMD_CSIM_START           "AT+CSIM=%u,\""
@@ -77,21 +79,51 @@ extern "C" {
 
 #define AT_CMD_SET_PDP_CONTEXT      "AT+CGDCONT"
 #define AT_CMD_SET_BAUD_RATE        "AT+IPR"
+#define AT_CMD_QUERY_BAUD_RATE      "AT+IPR?\r"
 #define AT_CMD_IMSI                 "AT+CIMI\r"
-#define AT_CMD_RESTORE_USER_SETTINGS "ATZ\r"
-#define AT_CMD_DEFINE_USER_SETTINGS "ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0\r"
-#define AT_CMD_SAVE_USER_SETTINGS   "AT&W\r"
-#define AT_CMD_SET_FLOW_CONTROL     "AT+IFC=0,0\r"
+
+//#define AT_CMD_RESTORE_USER_SETTINGS "ATZ\r"
+//#define AT_CMD_DEFINE_USER_SETTINGS "ATQ0 V1 E1 S0=0 &C1 &D2\r" // Quectel BG96 does not support +FCLASS=0 // SimCom7600 "ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0\r"
+//#define AT_CMD_SAVE_USER_SETTINGS   "AT&W\r"
+
+#define AT_CMD_SET_FLOW_CONTROL_NONE  "AT+IFC=0,0\r"
 #define AT_CMD_OPERATOR_SELECTION   "AT+COPS?\r"
+#define AT_CMD_OPERATOR_SELECTION_AUTO_MODE  "AT+COPS=0\r"
 #define AT_CMD_QUERY_SIGNAL_QUALITY "AT+CSQ\r"
 
-#define AT_CMD_DIAL                 "ATD*99#\r"
+#define AT_CMD_DIAL                 "ATD*99***1#\r" //"ATD*99#\r"
 #define AT_CMD_SWITCH_DATA_TO_CMD_MODE "+++"
 #define AT_CMD_SWITCH_CMD_TO_DATA_MODE "ATO\r"
 
-#define AT_CMD_QUERY_SIM_CARD_STATUS "AT+CPIN?"
-#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?"
-#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?"
+#define AT_CMD_QUERY_SIM_CARD_STATUS "AT+CPIN?\r"
+
+#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
+#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
+#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=2\r"
+
+#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
+#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
+#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
+
+#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
+#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
+#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
+#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
+
+#define AT_CMD_TEST_PDP_ADDRESS    "AT+CGPADDR=?\r"
+#define AT_CMD_SHOW_PDP_ADDRESS   "AT+CGPADDR=1\r"
+
+#define AT_CMD_SET_ERROR_MSG_FORMAT_VERBOSE    "AT+CMEE=2\r"
+#define AT_CMD_SET_TA_RESPONSE_FORMAT_VERBOSE  "ATV1\r"
+#define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
+#define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
+
+#if 0 // Quectel BG96 code
+#define AT_CMD_SET_QCFG_BAND        "AT+QCFG=\"band\"\r"
+#define AT_CMD_SET_QCFG_IOTOPMODE   "AT+QCFG=\"iotopmode\"\r"
+#define AT_CMD_SET_QCFG_NWSCANSEQ   "AT+QCFG=\"nwscanseq\"\r"
+#define AT_CMD_SET_QCFG_NWSCANMODE  "AT+QCFG=\"nwscanmode\"\r"
+#endif
 
 /* ----------------------------------------------------------------------*/
 /* Parameters for SimCom SIM7600G-H */
@@ -167,6 +199,7 @@ extern "C" {
 /* 23. set the SIM card hotswap on */
 #define AT_CMD_SET_HOTSWAP_ON       "AT+UIMHOTSWAPON=1"
 
+
 /* ----------------------------------------------------------------------*/
 /* Parameters for Murata Type-1SC */
 #elif (ATMODEM_HW == ATMODEM_HW_MURATA_1SC)
@@ -235,10 +268,85 @@ extern "C" {
 #undef AT_RSP_GET_GPS_INFO              // unsupported
 
 /* 22. query the SIM card hotswap level */
-#undef AT_CMD_QUERY_HOTSWAP_LEVEL
+#undef AT_CMD_QUERY_HOTSWAP_LEVEL       // unsupported
 
 /* 23. set the SIM card hotswap on */
-#undef AT_CMD_SET_HOTSWAP_ON
+#undef AT_CMD_SET_HOTSWAP_ON            // unsupported
+
+
+/* ----------------------------------------------------------------------*/
+/* Parameters for Quectel BG96 */
+#elif (ATMODEM_HW == ATMODEM_HW_QUECTEL_BG96)
+
+/* 1. modem maximum baud rate */
+#define PPP_MAX_MODEM_BAUD_RATE     115200
+
+/* 2. IO Reference Voltage pin */
+#undef PPP_MODEM_IO_REF             // unused
+
+/* 3. Power on/off pin */
+#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+
+/* 4. UART RX pin */
+#define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
+
+/* 5. UART TX pin */
+#define PPP_MODEM_UART_TX           ATMODEM_HW_PIN_UART_TX
+
+/* 6. method to power on/off modem */
+#define PPP_MODEM_POWER_METHOD      PPP_SIMPLE_SWITCH_METHOD
+
+/* 7. 'Power on' logic level */
+#define PPP_MODEM_POWER_KEY_ON_LEVEL  1
+
+/* 8. 'Power off' logic level */
+#define PPP_MODEM_POWER_KEY_OFF_LEVEL 0
+
+/* 9. whether to send AT during wait_for_modem_ready */
+#define PPP_SEND_AT_DURING_WAIT_FOR_MODEM_READY
+
+/* 10. whether modem_can support eSIM LPA */
+#undef PPP_MODEM_CAN_SUPPORT_ESIM_LPA   // unsupported
+
+/* 11. AT command to halt the PPP daemon running in the modem */
+#define AT_CMD_HALT_PPP_DAEMON      "ATH"
+
+/* 12. AT command to power off the modem */
+#undef AT_CMD_POWER_OFF_MODEM           // unsupported
+
+/* 13. AT command to reset the modem */
+#undef AT_CMD_RESET                     // unsupported
+
+/* 14. while modem is starting up, the hint that indicates it's ready */
+#undef AT_RSP_READY                     // unsupported
+
+/* 15. AT command to query UE System Info */
+#undef AT_CMD_QUERY_UE_INFO             // unsupported
+
+/* 16. good pattern to look for in UE System Info response */
+#undef AT_RSP_UE_INFO_PATTERN_LTE       // unsupported
+
+/* 17. failure pattern to look for in UE System Info response */
+#undef AT_RSP_UE_INFO_PATTERN_FAILED    // unsupported
+
+/* 18. AT command to start Global Positioning System (GPS) session */
+#undef AT_CMD_GPS_SESSION_START         // unsupported
+
+/* 19. AT command to stop Global Positioning System (GPS) session */
+#undef AT_CMD_GPS_SESSION_STOP          // unsupported
+
+/* 20. AT command to get Global Positioning System (GPS) info */
+#undef AT_CMD_GET_GPS_INFO              // unsupported
+
+/* 21. pattern to look for in GPS Info response */
+#undef AT_RSP_GET_GPS_INFO              // unsupported
+
+/* 22. query the SIM card hotswap level */
+#undef AT_CMD_QUERY_HOTSWAP_LEVEL       // unsupported
+
+/* 23. set the SIM card hotswap on */
+#undef AT_CMD_SET_HOTSWAP_ON            // unsupported
+
 
 #endif /* ATMODEM_HW */
 
