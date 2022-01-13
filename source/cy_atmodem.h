@@ -126,8 +126,8 @@ extern "C" {
 #endif
 
 /* ----------------------------------------------------------------------*/
-/* Parameters for SimCom SIM7600G-H */
-#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)
+/* Parameters for SimCom SIM7600G-H and A7670E */
+#if ((ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G) || (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E))
 
 /* 1. modem maximum baud rate */
 #define PPP_MAX_MODEM_BAUD_RATE     115200 //921600 (RT-thread add-profile failed) //3000000 (list profiles failed) // failed: 3686400, 3200000, // ok: 921600, 460800, 230400
@@ -144,14 +144,26 @@ extern "C" {
 /* 5. UART TX pin */
 #define PPP_MODEM_UART_TX           ATMODEM_HW_PIN_UART_TX
 
-/* 6. method to power on/off modem */
-#define PPP_MODEM_POWER_METHOD      PPP_POWER_STEP_METHOD
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)
+  /* 6. method to power on/off modem */
+  #define PPP_MODEM_POWER_METHOD      PPP_POWER_STEP_METHOD
 
-/* 7. 'Power on' logic level */
-#define PPP_MODEM_POWER_KEY_ON_LEVEL  0
+  /* 7. 'Power on' logic level */
+  #define PPP_MODEM_POWER_KEY_ON_LEVEL  0
 
-/* 8. 'Power off' logic level */
-#define PPP_MODEM_POWER_KEY_OFF_LEVEL 1
+  /* 8. 'Power off' logic level */
+  #define PPP_MODEM_POWER_KEY_OFF_LEVEL 1
+
+#elif (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)
+  /* 6. method to power on/off modem */
+  #define PPP_MODEM_POWER_METHOD      PPP_SIMPLE_SWITCH_METHOD
+
+  /* 7. 'Power on' logic level */
+  #define PPP_MODEM_POWER_KEY_ON_LEVEL  1
+
+  /* 8. 'Power off' logic level */
+  #define PPP_MODEM_POWER_KEY_OFF_LEVEL 0
+#endif
 
 /* 9. whether to send AT during wait_for_modem_ready */
 #define PPP_SEND_AT_DURING_WAIT_FOR_MODEM_READY

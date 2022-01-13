@@ -53,7 +53,7 @@ extern "C" {
 #define ATMODEM_HW_SIMCOM_7600G   1
 #define ATMODEM_HW_MURATA_1SC     2
 #define ATMODEM_HW_QUECTEL_BG96   3
-
+#define ATMODEM_HW_SIMCOM_A7670E  4
 
 #ifdef __cplusplus
 }
