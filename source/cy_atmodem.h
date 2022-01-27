@@ -54,6 +54,7 @@ extern "C" {
 /* methods to power on/off modem */
 #define PPP_SIMPLE_SWITCH_METHOD    1
 #define PPP_POWER_STEP_METHOD       2
+#define PPP_PULSE_SWITCH_METHOD     3
 
 
 /* ----------------------------------------------------------------------*/
@@ -76,7 +77,11 @@ extern "C" {
 #define AT_RSP_OK                   "OK"
 #define AT_RSP_OK_END               "OK\r\n"
 #define AT_RSP_START                "\r\n"
+#define AT_RSP_ABORTED              "ABORTED"
 
+#define AT_CMD_PDP_CONTEXT_CID      1
+#define AT_CMD_PDP_CONTEXT_TYPE     "IP"
+#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
 #define AT_CMD_SET_PDP_CONTEXT      "AT+CGDCONT"
 #define AT_CMD_SET_BAUD_RATE        "AT+IPR"
 #define AT_CMD_QUERY_BAUD_RATE      "AT+IPR?\r"
@@ -105,6 +110,10 @@ extern "C" {
 #define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
 #define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
 
+#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
+#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
+#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=2\r"
+
 #define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
 #define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
 #define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
@@ -115,8 +124,6 @@ extern "C" {
 
 #define AT_CMD_SET_ERROR_MSG_FORMAT_VERBOSE    "AT+CMEE=2\r"
 #define AT_CMD_SET_TA_RESPONSE_FORMAT_VERBOSE  "ATV1\r"
-#define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
-#define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
 
 #if 0 // Quectel BG96 code
 #define AT_CMD_SET_QCFG_BAND        "AT+QCFG=\"band\"\r"
@@ -211,6 +218,12 @@ extern "C" {
 /* 23. set the SIM card hotswap on */
 #define AT_CMD_SET_HOTSWAP_ON       "AT+UIMHOTSWAPON=1"
 
+/* 24. set DTR function mode */
+#define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
+
+/* 25. set connect response format */
+#define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
+
 
 /* ----------------------------------------------------------------------*/
 /* Parameters for Murata Type-1SC */
@@ -284,6 +297,12 @@ extern "C" {
 
 /* 23. set the SIM card hotswap on */
 #undef AT_CMD_SET_HOTSWAP_ON            // unsupported
+
+/* 24. set DTR function mode */
+#undef AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE  // unsupported
+
+/* 25. set connect response format */
+#undef AT_CMD_SET_CONNECT_RESPONSE_FORMAT   // unsupported
 
 
 /* ----------------------------------------------------------------------*/
@@ -359,8 +378,95 @@ extern "C" {
 /* 23. set the SIM card hotswap on */
 #undef AT_CMD_SET_HOTSWAP_ON            // unsupported
 
+/* 24. set DTR function mode */
+#define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
+
+/* 25. set connect response format */
+#define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
+
+
+// 
+/* ----------------------------------------------------------------------*/
+/* Parameters for U-Blox LARA R280 */
+#elif (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+
+/* 1. modem maximum baud rate */
+#define PPP_MAX_MODEM_BAUD_RATE     115200
+
+/* 2. IO Reference Voltage pin */
+#undef PPP_MODEM_IO_REF             // unused
+
+/* 3. Power on/off pin */
+#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+
+/* 4. UART RX pin */
+#define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
+
+/* 5. UART TX pin */
+#define PPP_MODEM_UART_TX           ATMODEM_HW_PIN_UART_TX
+
+/* 6. method to power on/off modem */
+#define PPP_MODEM_POWER_METHOD      PPP_PULSE_SWITCH_METHOD
+
+/* 7. 'Power on' logic level */
+#define PPP_MODEM_POWER_KEY_ON_LEVEL  1
+
+/* 8. 'Power off' logic level */
+#define PPP_MODEM_POWER_KEY_OFF_LEVEL 0
+
+/* 9. whether to send AT during wait_for_modem_ready */
+#define PPP_SEND_AT_DURING_WAIT_FOR_MODEM_READY
+
+/* 10. whether modem_can support eSIM LPA */
+#undef PPP_MODEM_CAN_SUPPORT_ESIM_LPA   // unsupported
+
+/* 11. AT command to halt the PPP daemon running in the modem */
+#define AT_CMD_HALT_PPP_DAEMON      "ATH"
+
+/* 12. AT command to power off the modem */
+#define AT_CMD_POWER_OFF_MODEM      "AT+CPWROFF"
+
+/* 13. AT command to reset the modem */
+#define AT_CMD_RESET                "AT+CFUN=16"
+
+/* 14. while modem is starting up, the hint that indicates it's ready */
+#undef AT_RSP_READY                     // unsupported
+
+/* 15. AT command to query UE System Info */
+#undef AT_CMD_QUERY_UE_INFO             // unsupported
+
+/* 16. good pattern to look for in UE System Info response */
+#undef AT_RSP_UE_INFO_PATTERN_LTE       // unsupported
+
+/* 17. failure pattern to look for in UE System Info response */
+#undef AT_RSP_UE_INFO_PATTERN_FAILED    // unsupported
+
+/* 18. AT command to start Global Positioning System (GPS) session */
+#undef AT_CMD_GPS_SESSION_START         // unsupported
+
+/* 19. AT command to stop Global Positioning System (GPS) session */
+#undef AT_CMD_GPS_SESSION_STOP          // unsupported
+
+/* 20. AT command to get Global Positioning System (GPS) info */
+#undef AT_CMD_GET_GPS_INFO              // unsupported
+
+/* 21. pattern to look for in GPS Info response */
+#undef AT_RSP_GET_GPS_INFO              // unsupported
+
+/* 22. query the SIM card hotswap level */
+#undef AT_CMD_QUERY_HOTSWAP_LEVEL       // unsupported
+
+/* 23. set the SIM card hotswap on */
+#undef AT_CMD_SET_HOTSWAP_ON            // unsupported
+
+/* 24. set DTR function mode */
+#define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
+
+/* 25. set connect response format */
+#define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
 
 #endif /* ATMODEM_HW */
+
 
 #ifdef __cplusplus
 }

@@ -50,10 +50,11 @@ extern "C" {
 /*-- Public Definitions -------------------------------------------------*/
 
 /* AT modem hardware */
-#define ATMODEM_HW_SIMCOM_7600G   1
-#define ATMODEM_HW_MURATA_1SC     2
-#define ATMODEM_HW_QUECTEL_BG96   3
-#define ATMODEM_HW_SIMCOM_A7670E  4
+#define ATMODEM_HW_SIMCOM_7600G     1
+#define ATMODEM_HW_MURATA_1SC       2
+#define ATMODEM_HW_QUECTEL_BG96     3
+#define ATMODEM_HW_SIMCOM_A7670E    4
+#define ATMODEM_HW_UBLOX_LARA_R280  5 // also works for SARA_U201
 
 #ifdef __cplusplus
 }
