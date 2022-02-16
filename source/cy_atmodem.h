@@ -64,6 +64,9 @@ extern "C" {
 #define AT_CMD_MFG                  "AT+CGMI\r"
 #define AT_CMD_MODEL                "AT+CGMM\r"
 #define AT_CMD_IMEI                 "AT+CGSN\r"
+#define AT_CMD_VERSION              "AT+CGMR\r"
+#define AT_CMD_CAPABILITIES         "AT+GCAP\r"
+
 #define AT_CMD_ECHO_OFF             "ATE0\r"
 #define AT_CMD_ECHO_ON              "ATE1\r"
 
@@ -81,11 +84,15 @@ extern "C" {
 
 #define AT_CMD_PDP_CONTEXT_CID      1
 #define AT_CMD_PDP_CONTEXT_TYPE     "IP"
-#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
+
 #define AT_CMD_SET_PDP_CONTEXT      "AT+CGDCONT"
 #define AT_CMD_SET_BAUD_RATE        "AT+IPR"
 #define AT_CMD_QUERY_BAUD_RATE      "AT+IPR?\r"
 #define AT_CMD_IMSI                 "AT+CIMI\r"
+
+#define AT_CMD_GET_PHONE_FUNCTIONALITY       "AT+CFUN?\r"
+#define AT_CMD_SET_PHONE_FUNCTIONALITY_FULL  "AT+CFUN=1\r"
+#define AT_CMD_SET_PHONE_FUNCTIONALITY_MIN   "AT+CFUN=0\r"
 
 //#define AT_CMD_RESTORE_USER_SETTINGS "ATZ\r"
 //#define AT_CMD_DEFINE_USER_SETTINGS "ATQ0 V1 E1 S0=0 &C1 &D2\r" // Quectel BG96 does not support +FCLASS=0 // SimCom7600 "ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0\r"
@@ -96,7 +103,9 @@ extern "C" {
 #define AT_CMD_OPERATOR_SELECTION_AUTO_MODE  "AT+COPS=0\r"
 #define AT_CMD_QUERY_SIGNAL_QUALITY "AT+CSQ\r"
 
-#define AT_CMD_DIAL                 "ATD*99***1#\r" //"ATD*99#\r"
+//#define AT_CMD_DIAL                 "ATD*99***1#\r"
+#define AT_CMD_DIAL                 "ATD*99#\r"
+
 #define AT_CMD_SWITCH_DATA_TO_CMD_MODE "+++"
 #define AT_CMD_SWITCH_CMD_TO_DATA_MODE "ATO\r"
 
@@ -125,16 +134,11 @@ extern "C" {
 #define AT_CMD_SET_ERROR_MSG_FORMAT_VERBOSE    "AT+CMEE=2\r"
 #define AT_CMD_SET_TA_RESPONSE_FORMAT_VERBOSE  "ATV1\r"
 
-#if 0 // Quectel BG96 code
-#define AT_CMD_SET_QCFG_BAND        "AT+QCFG=\"band\"\r"
-#define AT_CMD_SET_QCFG_IOTOPMODE   "AT+QCFG=\"iotopmode\"\r"
-#define AT_CMD_SET_QCFG_NWSCANSEQ   "AT+QCFG=\"nwscanseq\"\r"
-#define AT_CMD_SET_QCFG_NWSCANMODE  "AT+QCFG=\"nwscanmode\"\r"
-#endif
-
 /* ----------------------------------------------------------------------*/
 /* Parameters for SimCom SIM7600G-H and A7670E */
-#if ((ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G) || (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E))
+#if ((ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)   || \
+     (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+     (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G))
 
 /* 1. modem maximum baud rate */
 #define PPP_MAX_MODEM_BAUD_RATE     115200 //921600 (RT-thread add-profile failed) //3000000 (list profiles failed) // failed: 3686400, 3200000, // ok: 921600, 460800, 230400
@@ -161,7 +165,8 @@ extern "C" {
   /* 8. 'Power off' logic level */
   #define PPP_MODEM_POWER_KEY_OFF_LEVEL 1
 
-#elif (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G))
   /* 6. method to power on/off modem */
   #define PPP_MODEM_POWER_METHOD      PPP_SIMPLE_SWITCH_METHOD
 
@@ -182,7 +187,12 @@ extern "C" {
 #define AT_CMD_HALT_PPP_DAEMON      "ATH"
 
 /* 12. AT command to power off the modem */
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)
+#define AT_CMD_POWER_OFF_MODEM      "AT+CPOWD=1"
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
 #define AT_CMD_POWER_OFF_MODEM      "AT+CPOF"
+#endif
 
 /* 13. AT command to reset the modem */
 #define AT_CMD_RESET                "AT+CFUN=1,1\r\n"  /* SIMCom7600 & 7000 */
@@ -212,17 +222,84 @@ extern "C" {
 /* 21. pattern to look for in GPS Info response */
 #define AT_RSP_GET_GPS_INFO         "+CGPSINFO: "
 
+#if 1
+#undef AT_CMD_QUERY_HOTSWAP_LEVEL
+#undef AT_CMD_SET_HOTSWAP_ON
+#else
 /* 22. query the SIM card hotswap level */
 #define AT_CMD_QUERY_HOTSWAP_LEVEL  "AT+UIMHOTSWAPLEVEL?"
 
 /* 23. set the SIM card hotswap on */
 #define AT_CMD_SET_HOTSWAP_ON       "AT+UIMHOTSWAPON=1"
+#endif
 
 /* 24. set DTR function mode */
 #define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
 
 /* 25. set connect response format */
 #define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
+
+/* 26. get SIM card profile ICCID */
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)
+#define AT_CMD_ICCID                "AT+CCID\r"
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
+#define AT_CMD_ICCID                "AT+CICCID\r"
+#endif
+
+/* 27. activate PDP context */
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)
+#undef AT_CMD_ACTIVATE_PDP_CONTEXT      // PPP fails to connect
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G))
+#define AT_CMD_ACTIVATE_PDP_CONTEXT "AT+CGACT=1,1\r"
+#endif
+
+/* 28. enable BIP */
+#undef AT_CMD_ENABLE_BIP                // unsupported
+
+/* 29. Quectel QCFG band */
+#undef AT_CMD_SET_QCFG_BAND             // unsupported
+
+/* 30. Quectel QCFG iotopmode */
+#undef AT_CMD_SET_QCFG_IOTOPMODE        // unsupported
+
+/* 31. Quectel QCFG nwscanseq */
+#undef AT_CMD_SET_QCFG_NWSCANSEQ        // unsupported
+
+/* 32. Quectel QCFG nwscanmode */
+#undef AT_CMD_SET_QCFG_NWSCANMODE       // unsupported
+
+/* 33. Modem Identity Info I */
+#define AT_CMD_IDENT_0              "ATI\r"
+
+/* 34. Modem Identity Info II */
+#undef AT_CMD_IDENT_6                   // unsupported
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)
+#define AT_CMD_IDENT_6              "AT+SIMCOMATI\r"
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
+#undef AT_CMD_IDENT_6                   // unsupported
+#endif
+
+/* 35. Modem Identity Info III */
+#undef AT_CMD_IDENT_9                   // unsupported
+
+/* 36. Check if PDP Context command is available */
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)
+#undef AT_CMD_TEST_PDP_CONTEXT          // response is too verbose; fail to read OK
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
+#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
+#endif
+
+/* 37. Enable SIM Toolkit */
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)
+#define AT_CMD_ENABLE_STK           "AT+ENSTK=1\r"
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
+#undef AT_CMD_ENABLE_STK                // unsupported
+#endif
 
 
 /* ----------------------------------------------------------------------*/
@@ -304,6 +381,42 @@ extern "C" {
 /* 25. set connect response format */
 #undef AT_CMD_SET_CONNECT_RESPONSE_FORMAT   // unsupported
 
+/* 26. get SIM card profile ICCID */
+#define AT_CMD_ICCID                "AT%CCID\r"
+
+/* 27. activate PDP context */
+#undef AT_CMD_ACTIVATE_PDP_CONTEXT      // unsupported
+
+/* 28. enable BIP */
+#undef AT_CMD_ENABLE_BIP                // unsupported
+
+/* 29. Quectel QCFG band */
+#undef AT_CMD_SET_QCFG_BAND             // unsupported
+
+/* 30. Quectel QCFG iotopmode */
+#undef AT_CMD_SET_QCFG_IOTOPMODE        // unsupported
+
+/* 31. Quectel QCFG nwscanseq */
+#undef AT_CMD_SET_QCFG_NWSCANSEQ        // unsupported
+
+/* 32. Quectel QCFG nwscanmode */
+#undef AT_CMD_SET_QCFG_NWSCANMODE       // unsupported
+
+/* 33. Modem Identity Info I */
+#define AT_CMD_IDENT_0              "ATI\r"
+
+/* 34. Modem Identity Info II */
+#undef AT_CMD_IDENT_6                   // unsupported
+
+/* 35. Modem Identity Info III */
+#undef AT_CMD_IDENT_9                   // unsupported
+
+/* 36. Check if PDP Context command is available */
+#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
+
+/* 37. Enable SIM Toolkit */
+#undef AT_CMD_ENABLE_STK                // unsupported
+
 
 /* ----------------------------------------------------------------------*/
 /* Parameters for Quectel BG96 */
@@ -384,6 +497,43 @@ extern "C" {
 /* 25. set connect response format */
 #define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
 
+/* 26. get SIM card profile ICCID */
+#define AT_CMD_ICCID                "AT+QCCID\r"
+
+/* 27. activate PDP context */
+//#define AT_CMD_ACTIVATE_PDP_CONTEXT "AT+QIACT=1\r"
+#undef AT_CMD_ACTIVATE_PDP_CONTEXT      // unsupported
+
+/* 28. enable BIP */
+#define AT_CMD_ENABLE_BIP           "AT+QCFG=\"bip/auth\",1\r"
+
+/* 29. Quectel QCFG band */
+#define AT_CMD_SET_QCFG_BAND        "AT+QCFG=\"band\"\r"
+
+/* 30. Quectel QCFG iotopmode */
+#define AT_CMD_SET_QCFG_IOTOPMODE   "AT+QCFG=\"iotopmode\"\r"
+
+/* 31. Quectel QCFG nwscanseq */
+#define AT_CMD_SET_QCFG_NWSCANSEQ   "AT+QCFG=\"nwscanseq\"\r"
+
+/* 32. Quectel QCFG nwscanmode */
+#define AT_CMD_SET_QCFG_NWSCANMODE  "AT+QCFG=\"nwscanmode\"\r"
+
+/* 33. Modem Identity Info I */
+#define AT_CMD_IDENT_0              "ATI\r"
+
+/* 34. Modem Identity Info II */
+#undef AT_CMD_IDENT_6                   // unsupported
+
+/* 35. Modem Identity Info III */
+#undef AT_CMD_IDENT_9                   // unsupported
+
+/* 36. Check if PDP Context command is available */
+#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
+
+/* 37. Enable SIM Toolkit */
+#undef AT_CMD_ENABLE_STK                // unsupported
+
 
 // 
 /* ----------------------------------------------------------------------*/
@@ -391,7 +541,7 @@ extern "C" {
 #elif (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
 
 /* 1. modem maximum baud rate */
-#define PPP_MAX_MODEM_BAUD_RATE     115200
+#define PPP_MAX_MODEM_BAUD_RATE     115200 //921600 //460800 //115200
 
 /* 2. IO Reference Voltage pin */
 #undef PPP_MODEM_IO_REF             // unused
@@ -464,6 +614,42 @@ extern "C" {
 
 /* 25. set connect response format */
 #define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
+
+/* 26. get SIM card profile ICCID */
+#define AT_CMD_ICCID                "AT+CCID\r"
+
+/* 27. activate PDP context */
+#define AT_CMD_ACTIVATE_PDP_CONTEXT "AT+CGACT=1,1\r"
+
+/* 28. enable BIP */
+#undef AT_CMD_ENABLE_BIP                // unsupported
+
+/* 29. Quectel QCFG band */
+#undef AT_CMD_SET_QCFG_BAND             // unsupported
+
+/* 30. Quectel QCFG iotopmode */
+#undef AT_CMD_SET_QCFG_IOTOPMODE        // unsupported
+
+/* 31. Quectel QCFG nwscanseq */
+#undef AT_CMD_SET_QCFG_NWSCANSEQ        // unsupported
+
+/* 32. Quectel QCFG nwscanmode */
+#undef AT_CMD_SET_QCFG_NWSCANMODE       // unsupported
+
+/* 33. Modem Identity Info I */
+#define AT_CMD_IDENT_0              "ATI0\r"
+
+/* 34. Modem Identity Info II */
+#define AT_CMD_IDENT_6              "ATI6\r"
+
+/* 35. Modem Identity Info III */
+#define AT_CMD_IDENT_9              "ATI9\r"
+
+/* 36. Check if PDP Context command is available */
+#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
+
+/* 37. Enable SIM Toolkit */
+#undef AT_CMD_ENABLE_STK                // unsupported
 
 #endif /* ATMODEM_HW */
 

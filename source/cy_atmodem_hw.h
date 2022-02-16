@@ -55,6 +55,7 @@ extern "C" {
 #define ATMODEM_HW_QUECTEL_BG96     3
 #define ATMODEM_HW_SIMCOM_A7670E    4
 #define ATMODEM_HW_UBLOX_LARA_R280  5 // also works for SARA_U201
+#define ATMODEM_HW_SIMCOM_7000G     6
 
 #ifdef __cplusplus
 }
