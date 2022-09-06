@@ -60,7 +60,7 @@ extern "C" {
 /* ----------------------------------------------------------------------*/
 /* Parameters common to all modems */
 
-#define AT_CMD_READY_CHECK          "AT\r\n"
+#define AT_CMD_READY_CHECK          "AT\r"
 #define AT_CMD_MFG                  "AT+CGMI\r"
 #define AT_CMD_MODEL                "AT+CGMM\r"
 #define AT_CMD_IMEI                 "AT+CGSN\r"
@@ -110,23 +110,6 @@ extern "C" {
 #define AT_CMD_SWITCH_CMD_TO_DATA_MODE "ATO\r"
 
 #define AT_CMD_QUERY_SIM_CARD_STATUS "AT+CPIN?\r"
-
-#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
-#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
-#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=2\r"
-
-#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
-#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
-#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
-
-#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
-#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
-#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=2\r"
-
-#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
-#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
-#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
-#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
 
 #define AT_CMD_TEST_PDP_ADDRESS    "AT+CGPADDR=?\r"
 #define AT_CMD_SHOW_PDP_ADDRESS   "AT+CGPADDR=1\r"
@@ -184,19 +167,18 @@ extern "C" {
 #define PPP_MODEM_CAN_SUPPORT_ESIM_LPA
 
 /* 11. AT command to halt the PPP daemon running in the modem */
-#define AT_CMD_HALT_PPP_DAEMON      "ATH"
+#define AT_CMD_HALT_PPP_DAEMON      "ATH\r"
 
 /* 12. AT command to power off the modem */
 #if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)
-#define AT_CMD_POWER_OFF_MODEM      "AT+CPOWD=1"
+#define AT_CMD_POWER_OFF_MODEM      "AT+CPOWD=1\r"
 #elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
        (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
-#define AT_CMD_POWER_OFF_MODEM      "AT+CPOF"
+#define AT_CMD_POWER_OFF_MODEM      "AT+CPOF\r"
 #endif
 
 /* 13. AT command to reset the modem */
-#define AT_CMD_RESET                "AT+CFUN=1,1\r\n"  /* SIMCom7600 & 7000 */
-//#define AT_CMD_RESET              "AT+CRESET\r\n"    /* SIMCom7600 only */
+#define AT_CMD_RESET                "AT+CFUN=1,1\r"
 
 /* 14. while modem is starting up, the hint that indicates it's ready */
 #define AT_RSP_READY                "PB DONE"
@@ -222,16 +204,11 @@ extern "C" {
 /* 21. pattern to look for in GPS Info response */
 #define AT_RSP_GET_GPS_INFO         "+CGPSINFO: "
 
-#if 1
-#undef AT_CMD_QUERY_HOTSWAP_LEVEL
-#undef AT_CMD_SET_HOTSWAP_ON
-#else
 /* 22. query the SIM card hotswap level */
-#define AT_CMD_QUERY_HOTSWAP_LEVEL  "AT+UIMHOTSWAPLEVEL?"
+#undef AT_CMD_QUERY_HOTSWAP_LEVEL
 
 /* 23. set the SIM card hotswap on */
-#define AT_CMD_SET_HOTSWAP_ON       "AT+UIMHOTSWAPON=1"
-#endif
+#undef AT_CMD_SET_HOTSWAP_ON
 
 /* 24. set DTR function mode */
 #define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
@@ -248,11 +225,11 @@ extern "C" {
 #endif
 
 /* 27. activate PDP context */
-#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)
-#undef AT_CMD_ACTIVATE_PDP_CONTEXT      // PPP fails to connect
-#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
-       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G))
+#if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7000G)
 #define AT_CMD_ACTIVATE_PDP_CONTEXT "AT+CGACT=1,1\r"
+#elif ((ATMODEM_HW == ATMODEM_HW_SIMCOM_A7670E)  || \
+       (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G))
+#undef AT_CMD_ACTIVATE_PDP_CONTEXT      // PPP fails to connect
 #endif
 
 /* 28. enable BIP */
@@ -301,6 +278,45 @@ extern "C" {
 #undef AT_CMD_ENABLE_STK                // unsupported
 #endif
 
+/* 38. Test GSM (2G) Network */
+#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
+
+/* 39. Query GSM (2G) Network */
+#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
+
+/* 40. Set GSM (2G) Network Presentation Number */
+#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=2\r"
+
+/* 41. Test GPRS (3G) Network */
+#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
+
+/* 42. Query GPRS (3G) Network */
+#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
+
+/* 43. Set GPRS (3G) Network Presentation Number */
+#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
+
+/* 44. Test EPS (4G) Network */
+#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
+
+/* 45. Query EPS (4G) Network */
+#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
+
+/* 46. Set EPS (4G) Network Presentation Number */
+#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=2\r"
+
+/* 47. Test GPRS Service / Packet Domain State */
+#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
+
+/* 48. Query GPRS Service / Packet Domain State */
+#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
+
+/* 49. Attach to GPRS Service / Packet Domain */
+#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
+
+/* 50. Detach from GPRS Service / Packet Domain */
+#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
+
 
 /* ----------------------------------------------------------------------*/
 /* Parameters for Murata Type-1SC */
@@ -337,7 +353,7 @@ extern "C" {
 #undef PPP_MODEM_CAN_SUPPORT_ESIM_LPA   // unsupported
 
 /* 11. AT command to halt the PPP daemon running in the modem */
-#define AT_CMD_HALT_PPP_DAEMON      "AT%H"
+#define AT_CMD_HALT_PPP_DAEMON      "AT%H\r"
 
 /* 12. AT command to power off the modem */
 #undef AT_CMD_POWER_OFF_MODEM           // unsupported
@@ -415,7 +431,46 @@ extern "C" {
 #define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
 
 /* 37. Enable SIM Toolkit */
-#undef AT_CMD_ENABLE_STK                // unsupported
+#undef AT_CMD_ENABLE_STK
+
+/* 38. Test GSM (2G) Network */
+#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
+
+/* 39. Query GSM (2G) Network */
+#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
+
+/* 40. Set GSM (2G) Network Presentation Number */
+#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=2\r"
+
+/* 41. Test GPRS (3G) Network */
+#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
+
+/* 42. Query GPRS (3G) Network */
+#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
+
+/* 43. Set GPRS (3G) Network Presentation Number */
+#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
+
+/* 44. Test EPS (4G) Network */
+#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
+
+/* 45. Query EPS (4G) Network */
+#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
+
+/* 46. Set EPS (4G) Network Presentation Number */
+#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=2\r"
+
+/* 47. Test GPRS Service / Packet Domain State */
+#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
+
+/* 48. Query GPRS Service / Packet Domain State */
+#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
+
+/* 49. Attach to GPRS Service / Packet Domain */
+#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
+
+/* 50. Detach from GPRS Service / Packet Domain */
+#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
 
 
 /* ----------------------------------------------------------------------*/
@@ -453,7 +508,7 @@ extern "C" {
 #undef PPP_MODEM_CAN_SUPPORT_ESIM_LPA   // unsupported
 
 /* 11. AT command to halt the PPP daemon running in the modem */
-#define AT_CMD_HALT_PPP_DAEMON      "ATH"
+#define AT_CMD_HALT_PPP_DAEMON      "ATH\r"
 
 /* 12. AT command to power off the modem */
 #undef AT_CMD_POWER_OFF_MODEM           // unsupported
@@ -501,7 +556,6 @@ extern "C" {
 #define AT_CMD_ICCID                "AT+QCCID\r"
 
 /* 27. activate PDP context */
-//#define AT_CMD_ACTIVATE_PDP_CONTEXT "AT+QIACT=1\r"
 #undef AT_CMD_ACTIVATE_PDP_CONTEXT      // unsupported
 
 /* 28. enable BIP */
@@ -534,11 +588,50 @@ extern "C" {
 /* 37. Enable SIM Toolkit */
 #undef AT_CMD_ENABLE_STK                // unsupported
 
+/* 38. Test GSM (2G) Network */
+#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
+
+/* 39. Query GSM (2G) Network */
+#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
+
+/* 40. Set GSM (2G) Network Presentation Number */
+#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=2\r"
+
+/* 41. Test GPRS (3G) Network */
+#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
+
+/* 42. Query GPRS (3G) Network */
+#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
+
+/* 43. Set GPRS (3G) Network Presentation Number */
+#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
+
+/* 44. Test EPS (4G) Network */
+#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
+
+/* 45. Query EPS (4G) Network */
+#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
+
+/* 46. Set EPS (4G) Network Presentation Number */
+#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=2\r"
+
+/* 47. Test GPRS Service / Packet Domain State */
+#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
+
+/* 48. Query GPRS Service / Packet Domain State */
+#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
+
+/* 49. Attach to GPRS Service / Packet Domain */
+#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
+
+/* 50. Detach from GPRS Service / Packet Domain */
+#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
 
 // 
 /* ----------------------------------------------------------------------*/
-/* Parameters for U-Blox LARA R280 */
-#elif (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+/* Parameters for U-Blox LARA R280 and SARA U201 */
+#elif ((ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)   || \
+       (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201))
 
 /* 1. modem maximum baud rate */
 #define PPP_MAX_MODEM_BAUD_RATE     115200 //921600 //460800 //115200
@@ -571,13 +664,13 @@ extern "C" {
 #undef PPP_MODEM_CAN_SUPPORT_ESIM_LPA   // unsupported
 
 /* 11. AT command to halt the PPP daemon running in the modem */
-#define AT_CMD_HALT_PPP_DAEMON      "ATH"
+#define AT_CMD_HALT_PPP_DAEMON      "ATH\r"
 
 /* 12. AT command to power off the modem */
-#define AT_CMD_POWER_OFF_MODEM      "AT+CPWROFF"
+#define AT_CMD_POWER_OFF_MODEM      "AT+CPWROFF\r"
 
 /* 13. AT command to reset the modem */
-#define AT_CMD_RESET                "AT+CFUN=16"
+#define AT_CMD_RESET                "AT+CFUN=16\r"
 
 /* 14. while modem is starting up, the hint that indicates it's ready */
 #undef AT_RSP_READY                     // unsupported
@@ -646,10 +739,62 @@ extern "C" {
 #define AT_CMD_IDENT_9              "ATI9\r"
 
 /* 36. Check if PDP Context command is available */
+//#undef AT_CMD_TEST_PDP_CONTEXT          // response is too verbose; fail to read OK
 #define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
 
 /* 37. Enable SIM Toolkit */
-#undef AT_CMD_ENABLE_STK                // unsupported
+#define AT_CMD_ENABLE_STK           "AT+CFUN=6\r"
+
+/* 38. Test GSM (2G) Network */
+#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
+
+/* 39. Query GSM (2G) Network */
+#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
+
+/* 40. Set GSM (2G) Network Presentation Number */
+#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=0\r"
+
+/* 41. Test GPRS (3G) Network */
+#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
+
+/* 42. Query GPRS (3G) Network */
+#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
+
+/* 43. Set GPRS (3G) Network Presentation Number */
+#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=0\r"
+
+/* 44. Test EPS (4G) Network */
+#if (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
+#elif (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)
+#undef AT_CMD_TEST_EPS_NETWORK
+#endif
+
+/* 45. Query EPS (4G) Network */
+#if (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
+#elif (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)
+#undef AT_CMD_TEST_EPS_NETWORK
+#endif
+
+/* 46. Set EPS (4G) Network Presentation Number */
+#if (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=0\r"
+#elif (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)
+#undef AT_CMD_TEST_EPS_NETWORK
+#endif
+
+/* 47. Test GPRS Service / Packet Domain State */
+#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
+
+/* 48. Query GPRS Service / Packet Domain State */
+#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
+
+/* 49. Attach to GPRS Service / Packet Domain */
+#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
+
+/* 50. Detach from GPRS Service / Packet Domain */
+#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
 
 #endif /* ATMODEM_HW */
 
