@@ -57,6 +57,7 @@ extern "C" {
 #define ATMODEM_HW_UBLOX_LARA_R280  5
 #define ATMODEM_HW_SIMCOM_7000G     6
 #define ATMODEM_HW_UBLOX_SARA_U201  7
+#define ATMODEM_HW_UBLOX_SARA_R412M 8
 
 #ifdef __cplusplus
 }

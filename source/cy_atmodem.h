@@ -80,11 +80,13 @@ extern "C" {
 #define AT_RSP_OK                   "OK"
 #define AT_RSP_OK_END               "OK\r\n"
 #define AT_RSP_START                "\r\n"
+#define AT_RSP_START_OK             "\r\nOK"
 #define AT_RSP_ABORTED              "ABORTED"
 
 #define AT_CMD_PDP_CONTEXT_CID      1
 #define AT_CMD_PDP_CONTEXT_TYPE     "IP"
 
+#define AT_CMD_QUERY_PDP_CONTEXT    "AT+CGDCONT?\r"
 #define AT_CMD_SET_PDP_CONTEXT      "AT+CGDCONT"
 #define AT_CMD_SET_BAUD_RATE        "AT+IPR"
 #define AT_CMD_QUERY_BAUD_RATE      "AT+IPR?\r"
@@ -629,9 +631,10 @@ extern "C" {
 
 // 
 /* ----------------------------------------------------------------------*/
-/* Parameters for U-Blox LARA R280 and SARA U201 */
+/* Parameters for U-Blox LARA R280, SARA U201 and SARA R412M */
 #elif ((ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)   || \
-       (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201))
+       (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)   || \
+       (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_R412M))
 
 /* 1. modem maximum baud rate */
 #define PPP_MAX_MODEM_BAUD_RATE     115200 //921600 //460800 //115200
@@ -764,21 +767,24 @@ extern "C" {
 #define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=0\r"
 
 /* 44. Test EPS (4G) Network */
-#if (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+#if ((ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280) || \
+     (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_R412M))
 #define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
 #elif (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)
 #undef AT_CMD_TEST_EPS_NETWORK
 #endif
 
 /* 45. Query EPS (4G) Network */
-#if (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+#if ((ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280) || \
+     (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_R412M))
 #define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
 #elif (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)
 #undef AT_CMD_TEST_EPS_NETWORK
 #endif
 
 /* 46. Set EPS (4G) Network Presentation Number */
-#if (ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280)
+#if ((ATMODEM_HW == ATMODEM_HW_UBLOX_LARA_R280) || \
+     (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_R412M))
 #define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=0\r"
 #elif (ATMODEM_HW == ATMODEM_HW_UBLOX_SARA_U201)
 #undef AT_CMD_TEST_EPS_NETWORK
