@@ -484,8 +484,9 @@ extern "C" {
 
 
 /* ----------------------------------------------------------------------*/
-/* Parameters for Quectel BG96 */
-#elif (ATMODEM_HW == ATMODEM_HW_QUECTEL_BG96)
+/* Parameters for Quectel modems */
+#elif ((ATMODEM_HW == ATMODEM_HW_QUECTEL_BG96)     || \
+       (ATMODEM_HW == ATMODEM_HW_QUECTEL_EC200U_EC200N_EC600N))
 
 /* 1. modem maximum baud rate */
 #define PPP_MAX_MODEM_BAUD_RATE     115200
@@ -568,6 +569,8 @@ extern "C" {
 /* 27. activate PDP context */
 #undef AT_CMD_ACTIVATE_PDP_CONTEXT      // unsupported
 
+
+#if (ATMODEM_HW == ATMODEM_HW_QUECTEL_BG96)
 /* 28. enable BIP */
 #define AT_CMD_ENABLE_BIP           "AT+QCFG=\"bip/auth\",1\r"
 
@@ -582,6 +585,24 @@ extern "C" {
 
 /* 32. Quectel QCFG nwscanmode */
 #define AT_CMD_SET_QCFG_NWSCANMODE  "AT+QCFG=\"nwscanmode\"\r"
+
+#else
+/* 28. enable BIP */
+#undef AT_CMD_ENABLE_BIP                // unsupported
+
+/* 29. Quectel QCFG band */
+#undef AT_CMD_SET_QCFG_BAND             // unsupported
+
+/* 30. Quectel QCFG iotopmode */
+#undef AT_CMD_SET_QCFG_IOTOPMODE        // unsupported
+
+/* 31. Quectel QCFG nwscanseq */
+#undef AT_CMD_SET_QCFG_NWSCANSEQ        // unsupported
+
+/* 32. Quectel QCFG nwscanmode */
+#undef AT_CMD_SET_QCFG_NWSCANMODE       // unsupported
+#endif
+
 
 /* 33. Modem Identity Info I */
 #define AT_CMD_IDENT_0              "ATI\r"
