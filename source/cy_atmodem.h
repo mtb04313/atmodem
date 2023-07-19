@@ -522,7 +522,7 @@ extern "C" {
 #define AT_CMD_HALT_PPP_DAEMON      "ATH\r"
 
 /* 12. AT command to power off the modem */
-#undef AT_CMD_POWER_OFF_MODEM           // unsupported
+#define AT_CMD_POWER_OFF_MODEM           "AT+QPOWD\r"
 
 /* 13. AT command to reset the modem */
 #undef AT_CMD_RESET                     // unsupported
