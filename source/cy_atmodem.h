@@ -148,7 +148,11 @@ extern "C" {
 
 #if (ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)
   /* 6. method to power on/off modem */
-  #define PPP_MODEM_POWER_METHOD      PPP_POWER_STEP_METHOD
+  #if (USE_POWER_SWITCH_METHOD_FOR_SIMCOM_7600 == 1)
+    #define PPP_MODEM_POWER_METHOD      PPP_SIMPLE_SWITCH_METHOD
+  #else
+    #define PPP_MODEM_POWER_METHOD      PPP_POWER_STEP_METHOD
+  #endif
 
   /* 7. 'Power on' logic level */
   #define PPP_MODEM_POWER_KEY_ON_LEVEL  0
@@ -507,10 +511,10 @@ extern "C" {
 #define PPP_MODEM_POWER_METHOD      PPP_SIMPLE_SWITCH_METHOD
 
 /* 7. 'Power on' logic level */
-#define PPP_MODEM_POWER_KEY_ON_LEVEL  1
+#define PPP_MODEM_POWER_KEY_ON_LEVEL  0    // for mPCIe module
 
 /* 8. 'Power off' logic level */
-#define PPP_MODEM_POWER_KEY_OFF_LEVEL 0
+#define PPP_MODEM_POWER_KEY_OFF_LEVEL 1    // for mPCIe module
 
 /* 9. whether to send AT during wait_for_modem_ready */
 #define PPP_SEND_AT_DURING_WAIT_FOR_MODEM_READY
@@ -1004,6 +1008,162 @@ extern "C" {
 
 /* 50. Detach from GPRS Service / Packet Domain */
 #define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
+
+
+/* ----------------------------------------------------------------------*/
+/* Parameters for Telit modems */
+#elif (ATMODEM_HW == ATMODEM_HW_TELIT_LE910C1_ME910C1)
+
+/* 1. modem maximum baud rate */
+#define PPP_MAX_MODEM_BAUD_RATE     115200
+
+/* 2. IO Reference Voltage pin */
+#undef PPP_MODEM_IO_REF             // unused
+
+/* 3. Power on/off pin */
+#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+
+/* 4. UART RX pin */
+#define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
+
+/* 5. UART TX pin */
+#define PPP_MODEM_UART_TX           ATMODEM_HW_PIN_UART_TX
+
+/* 6. method to power on/off modem */
+#define PPP_MODEM_POWER_METHOD      PPP_SIMPLE_SWITCH_METHOD
+
+/* 7. 'Power on' logic level */
+#define PPP_MODEM_POWER_KEY_ON_LEVEL  0
+
+/* 8. 'Power off' logic level */
+#define PPP_MODEM_POWER_KEY_OFF_LEVEL 1
+
+/* 9. whether to send AT during wait_for_modem_ready */
+#define PPP_SEND_AT_DURING_WAIT_FOR_MODEM_READY
+
+/* 10. whether modem_can support eSIM LPA */
+#undef PPP_MODEM_CAN_SUPPORT_ESIM_LPA   // unsupported
+
+/* 11. AT command to halt the PPP daemon running in the modem */
+#define AT_CMD_HALT_PPP_DAEMON      "ATH\r"
+
+/* 12. AT command to power off the modem */
+#define AT_CMD_POWER_OFF_MODEM           "AT#SHDN\r"
+
+/* 13. AT command to reset the modem */
+#undef AT_CMD_RESET                     // unsupported
+
+/* 14. while modem is starting up, the hint that indicates it's ready */
+#undef AT_RSP_READY                     // unsupported
+
+/* 15. AT command to query UE System Info */
+#undef AT_CMD_QUERY_UE_INFO             // unsupported
+
+/* 16. good pattern to look for in UE System Info response */
+#undef AT_RSP_UE_INFO_PATTERN_LTE       // unsupported
+
+/* 17. failure pattern to look for in UE System Info response */
+#undef AT_RSP_UE_INFO_PATTERN_FAILED    // unsupported
+
+/* 18. AT command to start Global Positioning System (GPS) session */
+#undef AT_CMD_GPS_SESSION_START         // unsupported
+
+/* 19. AT command to stop Global Positioning System (GPS) session */
+#undef AT_CMD_GPS_SESSION_STOP          // unsupported
+
+/* 20. AT command to get Global Positioning System (GPS) info */
+#undef AT_CMD_GET_GPS_INFO              // unsupported
+
+/* 21. pattern to look for in GPS Info response */
+#undef AT_RSP_GET_GPS_INFO              // unsupported
+
+/* 22. query the SIM card hotswap level */
+#undef AT_CMD_QUERY_HOTSWAP_LEVEL       // unsupported
+
+/* 23. set the SIM card hotswap on */
+#undef AT_CMD_SET_HOTSWAP_ON            // unsupported
+
+/* 24. set DTR function mode */
+#define AT_CMD_SET_DTR_FUNCTION_MODE_IGNORE    "AT&D0\r"
+
+/* 25. set connect response format */
+#define AT_CMD_SET_CONNECT_RESPONSE_FORMAT     "ATX0\r"
+
+/* 26. get SIM card profile ICCID */
+#define AT_CMD_ICCID                "AT+ICCID\r"
+
+/* 27. activate PDP context */
+#undef AT_CMD_ACTIVATE_PDP_CONTEXT      // unsupported
+
+/* 28. enable BIP */
+#undef AT_CMD_ENABLE_BIP                // unsupported
+
+/* 29. Quectel QCFG band */
+#undef AT_CMD_SET_QCFG_BAND             // unsupported
+
+/* 30. Quectel QCFG iotopmode */
+#undef AT_CMD_SET_QCFG_IOTOPMODE        // unsupported
+
+/* 31. Quectel QCFG nwscanseq */
+#undef AT_CMD_SET_QCFG_NWSCANSEQ        // unsupported
+
+/* 32. Quectel QCFG nwscanmode */
+#undef AT_CMD_SET_QCFG_NWSCANMODE       // unsupported
+
+/* 33. Modem Identity Info I */
+#define AT_CMD_IDENT_0              "ATI3\r"
+
+/* 34. Modem Identity Info II */
+#define AT_CMD_IDENT_6              "ATI4\r"
+
+/* 35. Modem Identity Info III */
+#define AT_CMD_IDENT_9              "AT#SWPKGV\r"
+
+/* 36. Check if PDP Context command is available */
+#define AT_CMD_TEST_PDP_CONTEXT     "AT+CGDCONT=?\r"
+
+/* 37. Enable SIM Toolkit */
+#undef AT_CMD_ENABLE_STK                // unsupported
+
+/* 38. Test GSM (2G) Network */
+#define AT_CMD_TEST_GSM_NETWORK     "AT+CREG=?\r"
+
+/* 39. Query GSM (2G) Network */
+#define AT_CMD_QUERY_GSM_NETWORK     "AT+CREG?\r"
+
+/* 40. Set GSM (2G) Network Presentation Number */
+#define AT_CMD_SET_GSM_NETWORK_PRESENTATION "AT+CREG=2\r"
+
+/* 41. Test GPRS (3G) Network */
+#define AT_CMD_TEST_GPRS_NETWORK     "AT+CGREG=?\r"
+
+/* 42. Query GPRS (3G) Network */
+#define AT_CMD_QUERY_GPRS_NETWORK    "AT+CGREG?\r"
+
+/* 43. Set GPRS (3G) Network Presentation Number */
+#define AT_CMD_SET_GPRS_NETWORK_PRESENTATION  "AT+CGREG=2\r"
+
+/* 44. Test EPS (4G) Network */
+#define AT_CMD_TEST_EPS_NETWORK      "AT+CEREG=?\r"
+
+/* 45. Query EPS (4G) Network */
+#define AT_CMD_QUERY_EPS_NETWORK     "AT+CEREG?\r"
+
+/* 46. Set EPS (4G) Network Presentation Number */
+#define AT_CMD_SET_EPS_NETWORK_PRESENTATION  "AT+CEREG=2\r"
+
+/* 47. Test GPRS Service / Packet Domain State */
+#define AT_CMD_TEST_PACKET_DOMAIN    "AT+CGATT=?\r"
+
+/* 48. Query GPRS Service / Packet Domain State */
+#define AT_CMD_QUERY_PACKET_DOMAIN   "AT+CGATT?\r"
+
+/* 49. Attach to GPRS Service / Packet Domain */
+#define AT_CMD_ATTACH_PACKET_DOMAIN  "AT+CGATT=1\r"
+
+/* 50. Detach from GPRS Service / Packet Domain */
+#define AT_CMD_DETACH_PACKET_DOMAIN  "AT+CGATT=0\r"
+
 
 #endif /* ATMODEM_HW */
 
