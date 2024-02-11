@@ -125,6 +125,26 @@ extern "C" {
 #undef PPP_MODEM_RTS
 #endif
 
+/* mPCIe Reset pin */
+#ifdef ATMODEM_HW_PIN_MPCIE_RESET_KEY
+    #define PPP_MODEM_RESET_KEY         ATMODEM_HW_PIN_MPCIE_RESET_KEY
+    #define PPP_MODEM_RESET_PULSE_WIDTH_MSEC    400
+#else
+    #undef PPP_MODEM_RESET_KEY
+    #undef PPP_MODEM_RESET_PULSE_WIDTH_MSEC
+#endif
+
+/* mPCIe Disable Wireless pin */
+#ifdef ATMODEM_HW_PIN_MPCIE_DISABLE_WIRELESS_KEY
+    #define PPP_MODEM_DISABLE_WIRELESS_KEY    ATMODEM_HW_PIN_MPCIE_DISABLE_WIRELESS_KEY
+#else
+    #undef PPP_MODEM_DISABLE_WIRELESS_KEY
+#endif
+
+#define PPP_MODEM_KEY_LOW_LEVEL     0
+#define PPP_MODEM_KEY_HIGH_LEVEL    1
+
+
 /* ----------------------------------------------------------------------*/
 /* Parameters for SimCom SIM7600G-H and A7670E */
 #if ((ATMODEM_HW == ATMODEM_HW_SIMCOM_7600G)   || \
@@ -138,7 +158,11 @@ extern "C" {
 #undef PPP_MODEM_IO_REF             // unused
 
 /* 3. Power on/off pin */
-#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#ifdef ATMODEM_HW_PIN_POWER_KEY
+    #define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#else
+    #undef PPP_MODEM_POWER_KEY
+#endif
 
 /* 4. UART RX pin */
 #define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
@@ -343,7 +367,11 @@ extern "C" {
 #define PPP_MODEM_IO_REF            ATMODEM_HW_PIN_IO_REF
 
 /* 3. Power on/off pin */
-#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#ifdef ATMODEM_HW_PIN_POWER_KEY
+    #define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#else
+    #undef PPP_MODEM_POWER_KEY
+#endif
 
 /* 4. UART RX pin */
 #define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
@@ -499,7 +527,11 @@ extern "C" {
 #undef PPP_MODEM_IO_REF             // unused
 
 /* 3. Power on/off pin */
-#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#ifdef ATMODEM_HW_PIN_POWER_KEY
+    #define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#else
+    #undef PPP_MODEM_POWER_KEY
+#endif
 
 /* 4. UART RX pin */
 #define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
@@ -675,7 +707,11 @@ extern "C" {
 #undef PPP_MODEM_IO_REF             // unused
 
 /* 3. Power on/off pin */
-#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#ifdef ATMODEM_HW_PIN_POWER_KEY
+    #define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#else
+    #undef PPP_MODEM_POWER_KEY
+#endif
 
 /* 4. UART RX pin */
 #define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
@@ -865,7 +901,11 @@ extern "C" {
 #undef PPP_MODEM_IO_REF             // unused
 
 /* 3. Power on/off pin */
-#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#ifdef ATMODEM_HW_PIN_POWER_KEY
+    #define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#else
+    #undef PPP_MODEM_POWER_KEY
+#endif
 
 /* 4. UART RX pin */
 #define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
@@ -1021,7 +1061,11 @@ extern "C" {
 #undef PPP_MODEM_IO_REF             // unused
 
 /* 3. Power on/off pin */
-#define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#ifdef ATMODEM_HW_PIN_POWER_KEY
+    #define PPP_MODEM_POWER_KEY         ATMODEM_HW_PIN_POWER_KEY
+#else
+    #undef PPP_MODEM_POWER_KEY
+#endif
 
 /* 4. UART RX pin */
 #define PPP_MODEM_UART_RX           ATMODEM_HW_PIN_UART_RX
