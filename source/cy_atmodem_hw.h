@@ -61,6 +61,7 @@ extern "C" {
 #define ATMODEM_HW_CINTERION_EXS62W 9
 #define ATMODEM_HW_QUECTEL_EC200U_EC200N_EC600N   10
 #define ATMODEM_HW_TELIT_LE910C1_ME910C1          11
+#define ATMODEM_HW_ANY_MPCIE        99
 
 #ifdef __cplusplus
 }
